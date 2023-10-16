@@ -15,7 +15,7 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_security_group" "ecs" {
-  name = local.name
+  name = "${local.name}-sg"
 
   egress {
     from_port   = 0
@@ -49,7 +49,8 @@ resource "aws_launch_template" "ecs" {
   )
 }
 
-resource "aws_autoscaling_group" "ecs" {
+resource "aws_autoscaling_group" "ecs_sg" {
+  name             = "${local.name}-ecs-sg"
   desired_capacity = 2
   max_size         = 3
   min_size         = 2
@@ -59,6 +60,12 @@ resource "aws_autoscaling_group" "ecs" {
   launch_template {
     id      = aws_launch_template.ecs.id
     version = "$Latest"
+  }
+
+  tag {
+    key                 = "AmazonECSManaged"
+    value               = true
+    propagate_at_launch = true
   }
 
   tag {
@@ -89,18 +96,18 @@ resource "aws_ecs_capacity_provider" "main" {
   name = "${local.name}-ec2"
 
   auto_scaling_group_provider {
-    auto_scaling_group_arn = aws_autoscaling_group.ecs.arn
+    auto_scaling_group_arn = aws_autoscaling_group.ecs_sg.arn
 
     managed_scaling {
       maximum_scaling_step_size = 1000
       minimum_scaling_step_size = 1
       status                    = "ENABLED"
-      target_capacity           = 3
+      target_capacity           = 2
     }
   }
 }
 
-resource "aws_ecs_cluster_capacity_providers" "example" {
+resource "aws_ecs_cluster_capacity_providers" "ec2" {
   cluster_name = aws_ecs_cluster.main.name
 
   capacity_providers = [aws_ecs_capacity_provider.main.name]
@@ -115,4 +122,27 @@ resource "aws_ecs_cluster_capacity_providers" "example" {
 resource "aws_ecs_task_definition" "nginx" {
   family                = "${local.name}-nginx"
   container_definitions = file("./task-definitions/nginx.json")
+}
+
+resource "aws_ecs_service" "nginx" {
+  name            = "${local.name}-nginx"
+  cluster         = aws_ecs_cluster.main.id
+  task_definition = aws_ecs_task_definition.nginx.arn
+  desired_count   = 1
+}
+
+resource "aws_lb" "ecs" {
+  name               = "${local.name}-lb"
+  internal           = false
+  load_balancer_type = "application"
+  subnets            = [var.subnet_1a, var.subnet_1b]
+  security_groups    = [aws_security_group.ecs.id]
+  tags               = local.tags
+}
+
+resource "aws_lb_target_group" "ecs" {
+  name     = "${local.name}-tg"
+  port     = 80
+  protocol = "HTTP"
+  vpc_id   = data.aws_vpc.main.id
 }
