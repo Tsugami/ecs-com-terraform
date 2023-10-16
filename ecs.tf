@@ -79,3 +79,8 @@ resource "aws_autoscaling_group" "ecs" {
     propagate_at_launch = false
   }
 }
+
+resource "aws_ecs_cluster" "main" {
+  name = local.name
+  tags = local.tags
+}
