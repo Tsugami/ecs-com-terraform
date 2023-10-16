@@ -1,3 +1,5 @@
+
+
 variable "env" {
   description = "value of environment"
   type        = string
@@ -20,5 +22,17 @@ variable "subnet_1a" {
 
 variable "subnet_1b" {
   description = "value of subnet_a2"
+  type        = string
+}
+
+variable "instance_type" {
+  description = "value of instance_type"
+  default     = "t2.micro"
+  type        = string
+}
+
+variable "image_id" {
+  description = "value of image_id"
+  default     = "ami-062c116e449466e7f"
   type        = string
 }

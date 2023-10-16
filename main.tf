@@ -2,8 +2,8 @@ provider "aws" {
   region = var.region
 }
 
-
 locals {
+  name = "alura-ecs-${var.env}"
   tags = {
     ManagedBy  = "Terraform"
     Enviroment = var.env
