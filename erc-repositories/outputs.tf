@@ -5,3 +5,4 @@ output "ecr_nginx" {
 output "ecr_app" {
   value = aws_ecr_repository.app.repository_url
 }
+
