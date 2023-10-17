@@ -132,82 +132,77 @@ resource "aws_ecs_cluster_capacity_providers" "ec2" {
 
 
 
-resource "aws_ecs_task_definition" "nginx" {
-  family                = "${local.name}-nginx"
-  network_mode          = "awsvpc"
-  cpu                   = 256
-  container_definitions = file("./task-definitions/nginx.json")
+# resource "aws_ecs_task_definition" "nginx" {
+#   family                = "${local.name}-nginx"
+#   network_mode          = "awsvpc"
+#   cpu                   = 256
+#   container_definitions = file("./task-definitions/nginx.json")
 
-  runtime_platform {
-    operating_system_family = "LINUX"
-    cpu_architecture        = "X86_64"
-  }
-}
+#   runtime_platform {
+#     operating_system_family = "LINUX"
+#     cpu_architecture        = "X86_64"
+#   }
+# }
 
-resource "aws_ecs_service" "nginx" {
-  name            = "${local.name}-nginx"
-  cluster         = aws_ecs_cluster.main.id
-  task_definition = aws_ecs_task_definition.nginx.arn
-  desired_count   = 2
-
-
-  capacity_provider_strategy {
-    weight            = 100
-    capacity_provider = aws_ecs_capacity_provider.main.name
-  }
-
-  load_balancer {
-    container_name   = "nginx"
-    container_port   = 80
-    target_group_arn = aws_lb_target_group.ecs.arn
-  }
-
-  force_new_deployment = true
-  placement_constraints { // oq isso faz?
-    type = "distinctInstance"
-  }
-
-  network_configuration {
-    subnets         = [var.subnet_1a, var.subnet_1b]
-    security_groups = [aws_security_group.ecs.id]
-  }
-
-  triggers = {
-    redeployment = timestamp()
-  }
-
-  depends_on = [aws_autoscaling_group.ecs_sg]
-}
-
-resource "aws_lb" "ecs" {
-  name               = "${local.name}-lb"
-  internal           = false
-  load_balancer_type = "application"
-  subnets            = [var.subnet_1a, var.subnet_1b]
-  security_groups    = [aws_security_group.ecs.id]
-  tags               = local.tags
-}
-
-resource "aws_lb_target_group" "ecs" {
-  name        = "${local.name}-tg"
-  port        = 80
-  protocol    = "HTTP"
-  target_type = "ip"
-  vpc_id      = data.aws_vpc.main.id
-
-  health_check {
-    path = "/"
-  }
-}
-
-resource "aws_lb_listener" "ecs" {
-  load_balancer_arn = aws_lb.ecs.arn
-  port              = 80
-  protocol          = "HTTP"
+# resource "aws_ecs_service" "nginx" {
+#   name            = "${local.name}-nginx"
+#   cluster         = aws_ecs_cluster.main.id
+#   task_definition = aws_ecs_task_definition.nginx.arn
+#   desired_count   = 2
 
 
-  default_action {
-    type             = "forward"
-    target_group_arn = aws_lb_target_group.ecs.arn
-  }
-}
+#   capacity_provider_strategy {
+#     weight            = 100
+#     capacity_provider = aws_ecs_capacity_provider.main.name
+#   }
+
+#   load_balancer {
+#     container_name   = "nginx"
+#     container_port   = 80
+#     target_group_arn = aws_lb_target_group.ecs.arn
+#   }
+
+#   force_new_deployment = true
+#   placement_constraints { // oq isso faz?
+#     type = "distinctInstance"
+#   }
+
+#   network_configuration {
+#     subnets         = [var.subnet_1a, var.subnet_1b]
+#     security_groups = [aws_security_group.ecs.id]
+#   }
+
+#   triggers = {
+#     redeployment = timestamp()
+#   }
+
+#   depends_on = [aws_autoscaling_group.ecs_sg]
+# }
+
+
+# resource "aws_lb_target_group" "ecs" {
+#   name        = "${local.name}-tg"
+#   port        = 80
+#   protocol    = "HTTP"
+#   target_type = "ip"
+#   vpc_id      = data.aws_vpc.main.id
+
+#   health_check {
+#     path = "/"
+#   }
+# }
+
+
+
+
+# resource "aws_lb_listener" "ecs" {
+#   load_balancer_arn = aws_lb.ecs.arn
+#   port              = 80
+#   protocol          = "HTTP"
+
+
+#   default_action {
+#     type             = "forward"
+#     target_group_arn = aws_lb_target_group.ecs.arn
+#   }
+# }

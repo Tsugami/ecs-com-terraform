@@ -15,6 +15,10 @@ variable "cluster_id" {
   type = string
 }
 
+variable "vpc_id" {
+  type = string
+}
+
 variable "desired_count" {
   type    = number
   default = 1
@@ -31,5 +35,12 @@ variable "network" {
   type = object({
     subnets         = list(string)
     security_groups = list(string)
+  })
+}
+
+variable "load_balancer" {
+  type = object({
+    container_name          = string
+    container_port          = number
   })
 }

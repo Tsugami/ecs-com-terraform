@@ -1,0 +1,17 @@
+[
+  {
+    "name": "app",
+    "image": "545888714756.dkr.ecr.us-east-1.amazonaws.com/alura-ecs-dev-app",
+    "essential": true,
+    "portMappings": [
+      {
+        "containerPort": 80,
+        "hostPort": 80,
+        "protocol": "tcp"
+      }
+    ],
+    "memory": 512,
+    "cpu": 256,
+    "requiresCompatibilities": ["EC2"]
+  }
+]
