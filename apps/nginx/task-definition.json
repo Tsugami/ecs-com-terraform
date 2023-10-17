@@ -1,0 +1,34 @@
+{
+  "containerDefinitions": [
+    {
+      "name": "app",
+      "image": "545888714756.dkr.ecr.us-east-1.amazonaws.com/alura-ecs-dev-app",
+      "cpu": 256,
+      "memory": 512,
+      "portMappings": [
+        {
+          "containerPort": 80,
+          "hostPort": 80,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [],
+      "mountPoints": [],
+      "volumesFrom": []
+    }
+  ],
+  "family": "alura-ecs-dev-app-service-family",
+  "networkMode": "awsvpc",
+  "revision": 1,
+  "volumes": [],
+  "status": "ACTIVE",
+  "placementConstraints": [],
+  "compatibilities": ["EC2"],
+  "cpu": "256",
+  "runtimePlatform": {
+    "cpuArchitecture": "X86_64",
+    "operatingSystemFamily": "LINUX"
+  },
+  "tags": []
+}
