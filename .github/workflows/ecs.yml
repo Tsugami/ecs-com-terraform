@@ -19,7 +19,7 @@ env:
   ECR_REPOSITORY: alura-ecs-dev-nginx # set this to your Amazon ECR repository name
   ECS_SERVICE: alura-ecs-dev-nginx-service # set this to your Amazon ECS service name
   ECS_CLUSTER: alura-ecs-dev # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: alura-ecs-dev-nginx-service-family # set this to the path to your Amazon ECS task definition                                               # file, e.g. .aws/task-definition.json
+  ECS_TASK_DEFINITION: apps/app/task_definition.json # set this to the path to your Amazon ECS task definition                                               # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: nginx
 jobs:
   deploy:
