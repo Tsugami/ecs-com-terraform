@@ -1,8 +1,8 @@
 {
   "containerDefinitions": [
     {
-      "name": "app",
-      "image": "545888714756.dkr.ecr.us-east-1.amazonaws.com/alura-ecs-dev-app",
+      "name": "nginx",
+      "image": "545888714756.dkr.ecr.us-east-1.amazonaws.com/alura-ecs-dev-nginx",
       "cpu": 256,
       "memory": 512,
       "portMappings": [
@@ -18,12 +18,10 @@
       "volumesFrom": []
     }
   ],
-  "family": "alura-ecs-dev-app-service-family",
+  "family": "alura-ecs-dev-nginx-service-family",
   "networkMode": "awsvpc",
-  "revision": 1,
   "volumes": [],
   "status": "ACTIVE",
-  "placementConstraints": [],
   "compatibilities": ["EC2"],
   "cpu": "256",
   "runtimePlatform": {
