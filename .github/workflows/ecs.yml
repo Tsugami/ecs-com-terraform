@@ -19,7 +19,7 @@ env:
   ECR_REPOSITORY: alura-ecs-dev-nginx # set this to your Amazon ECR repository name
   ECS_SERVICE: alura-ecs-dev-nginx-service # set this to your Amazon ECS service name
   ECS_CLUSTER: alura-ecs-dev # set this to your Amazon ECS cluster name
-  ECS_TASK_DEFINITION: apps/app/task_definition.json # set this to the path to your Amazon ECS task definition                                               # file, e.g. .aws/task-definition.json
+  ECS_TASK_DEFINITION: alura-ecs-dev-app-service-family # set this to the path to your Amazon ECS task definition                                               # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: nginx
 jobs:
   deploy:
@@ -55,12 +55,16 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT
+    
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition ${{ env.ECS_TASK_DEFINITION }} --query taskDefinition > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@c804dfbdd57f713b6c079302a4c01db7017a36fc
         with:
-          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          task-definition: task-definition.json
           container-name: ${{ env.CONTAINER_NAME }}
           image: ${{ steps.build-image.outputs.image }}
 
