@@ -1,0 +1,6 @@
+env           = "dev2"
+region        = "us-east-1"
+vpc           = "vpc-06ad85d40066d9a4f"
+subnet_1a     = "subnet-04eab98888df7cc76"
+subnet_1b     = "subnet-04a9c10d7e956b440"
+instance_type = "t2.micro"
