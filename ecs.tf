@@ -29,7 +29,7 @@ resource "aws_security_group" "ecs" {
     to_port     = 0
     protocol    = -1
     cidr_blocks = ["0.0.0.0/0"]
-
+    self        = "false"
   }
 }
 
@@ -38,14 +38,14 @@ data "aws_ssm_parameter" "ecs_optimized_ami" {
 }
 
 resource "aws_launch_template" "ecs" {
-  name_prefix            = "ecs-template"
-  image_id               = jsondecode(data.aws_ssm_parameter.ecs_optimized_ami.value)["image_id"]
-  instance_type          = var.instance_type
+  name_prefix   = "ecs-template"
+  image_id      = jsondecode(data.aws_ssm_parameter.ecs_optimized_ami.value)["image_id"]
+  instance_type = var.instance_type
   # key_name               = "ec2ecsglog"
   vpc_security_group_ids = [aws_security_group.ecs.id]
   user_data = base64encode(<<-EOT
         #!/bin/bash
-        echo ECS_CLUSTER=my-ecs-cluster >> /etc/ecs/ecs.config
+        echo ECS_CLUSTER=${local.name} >> /etc/ecs/ecs.config
       EOT
   )
 
@@ -194,6 +194,10 @@ resource "aws_lb_target_group" "ecs" {
   protocol    = "HTTP"
   target_type = "ip"
   vpc_id      = data.aws_vpc.main.id
+
+  health_check {
+    path = "/"
+  }
 }
 
 resource "aws_lb_listener" "ecs" {

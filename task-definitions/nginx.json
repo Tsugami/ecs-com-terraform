@@ -1,7 +1,7 @@
 [
   {
     "name": "nginx",
-    "image": "545888714756.dkr.ecr.us-east-1.amazonaws.com/nginx:latest",
+    "image": "public.ecr.aws/ubuntu/nginx:1.18-20.04_beta",
     "essential": true,
     "portMappings": [
       {
