@@ -15,8 +15,8 @@ data "aws_ami" "ubuntu" {
 }
 
 resource "aws_security_group" "ecs" {
-  name = "${local.name}-sg"
-
+  name   = "${local.name}-sg"
+  vpc_id = var.vpc
   egress {
     from_port   = 0
     to_port     = 0
